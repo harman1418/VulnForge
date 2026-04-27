@@ -1,0 +1,407 @@
+// ── VulnForge Tools Configuration ─────────────────────────────────────────────
+// Single source of truth for all tools across navbar, listing, and tool pages
+
+export const TOOL_CATEGORIES = [
+  { id: 'recon',        label: 'Recon Tools',        icon: '🔍', color: 'var(--blue)' },
+  { id: 'vuln',         label: 'Vuln Scanners',       icon: '🛡️', color: 'var(--orange)' },
+  { id: 'exploit',      label: 'Exploit Tools',       icon: '💥', color: 'var(--red)' },
+  { id: 'osint',        label: 'OSINT',               icon: '🌐', color: 'var(--purple)' },
+  { id: 'fuzzing',      label: 'Fuzzing',             icon: '🔀', color: 'var(--green)' },
+]
+
+export const ALL_TOOLS = [
+
+  // ── RECON ──────────────────────────────────────────────────────────────────
+  {
+    id: 'portscan',
+    name: 'Port Scanner',
+    shortName: 'Port Scan',
+    desc: 'Discover open ports and running services using Nmap',
+    category: 'recon',
+    path: '/tools/portscan',
+    endpoint: '/api/portscan/',
+    color: 'var(--blue)',
+    fields: [
+      { name: 'scan_type', type: 'select', label: 'Scan Type', default: 'basic',
+        options: [
+          { value: 'basic',       label: 'Basic (Fast)' },
+          { value: 'full',        label: 'Full (All Ports)' },
+          { value: 'service',     label: 'Service Detection' },
+          { value: 'udp',         label: 'UDP Scan' },
+        ]
+      }
+    ],
+    placeholder: 'e.g. example.com or 192.168.1.1',
+  },
+  {
+    id: 'subdomain',
+    name: 'Subdomain Finder',
+    shortName: 'Subdomains',
+    desc: 'Enumerate subdomains using Subfinder passive DNS',
+    category: 'recon',
+    path: '/tools/subdomain',
+    endpoint: '/api/subdomain/',
+    color: 'var(--blue)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'whois',
+    name: 'Whois Lookup',
+    shortName: 'Whois',
+    desc: 'Get domain registration, ownership and nameserver info',
+    category: 'recon',
+    path: '/tools/whois',
+    endpoint: '/api/whois/',
+    color: 'var(--blue)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'headers',
+    name: 'Header Scanner',
+    shortName: 'HTTP Headers',
+    desc: 'Analyze HTTP headers and detect missing security headers',
+    category: 'recon',
+    path: '/tools/headers',
+    endpoint: '/api/headers/',
+    color: 'var(--blue)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'waf',
+    name: 'WAF Detector',
+    shortName: 'WAF Detect',
+    desc: 'Detect Web Application Firewalls and CDN providers',
+    category: 'recon',
+    path: '/tools/waf',
+    endpoint: '/api/waf/',
+    color: 'var(--orange)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'ssl',
+    name: 'SSL Scanner',
+    shortName: 'SSL/TLS',
+    desc: 'Check SSL/TLS config, certificate validity and cipher suites',
+    category: 'recon',
+    path: '/tools/ssl',
+    endpoint: '/api/ssl/',
+    color: 'var(--green)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'takeover',
+    name: 'Subdomain Takeover',
+    shortName: 'Takeover Check',
+    desc: 'Find subdomains vulnerable to CNAME takeover attacks',
+    category: 'recon',
+    path: '/tools/takeover',
+    endpoint: '/api/takeover/',
+    color: 'var(--red)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'robots',
+    name: 'Robots.txt Analyzer',
+    shortName: 'Robots.txt',
+    desc: 'Analyze robots.txt for sensitive hidden paths and sitemaps',
+    category: 'recon',
+    path: '/tools/robots',
+    endpoint: '/api/robots/',
+    color: 'var(--blue)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'dns_brute',
+    name: 'DNS Brute Force',
+    shortName: 'DNS Brute',
+    desc: 'Discover hidden subdomains via dictionary attack',
+    category: 'recon',
+    path: '/tools/dns_brute',
+    endpoint: '/api/dns_brute/',
+    color: 'var(--blue)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'api_scan',
+    name: 'API Endpoint Scanner',
+    shortName: 'API Scan',
+    desc: 'Find exposed Swagger, OpenAPI, and common API endpoints',
+    category: 'recon',
+    path: '/tools/api_scan',
+    endpoint: '/api/api_scan/',
+    color: 'var(--purple)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'reverse_ip',
+    name: 'Reverse IP Lookup',
+    shortName: 'Reverse IP',
+    desc: 'Find other domains hosted on the same server IP',
+    category: 'recon',
+    path: '/tools/reverse_ip',
+    endpoint: '/api/reverse_ip/',
+    color: 'var(--blue)',
+    isNew: true,
+    placeholder: 'e.g. example.com or 192.168.1.1',
+  },
+  {
+    id: 'tech',
+    name: 'Technology Detector',
+    shortName: 'Tech Detect',
+    desc: 'Identify frameworks, CMS, and server software stack',
+    category: 'recon',
+    path: '/tools/tech',
+    endpoint: '/api/tech/',
+    color: 'var(--green)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+
+  // ── VULN SCANNERS ──────────────────────────────────────────────────────────
+  {
+    id: 'nuclei',
+    name: 'CVE Scanner',
+    shortName: 'CVE Scan',
+    desc: 'Scan for known CVEs using 9000+ Nuclei templates',
+    category: 'vuln',
+    path: '/tools/nuclei',
+    endpoint: '/api/nuclei/',
+    color: 'var(--red)',
+    fields: [
+      { name: 'severity', type: 'select', label: 'Severity', default: 'critical,high',
+        options: [
+          { value: 'critical,high',         label: 'Critical + High' },
+          { value: 'critical,high,medium',  label: 'Critical + High + Medium' },
+          { value: 'critical',              label: 'Critical Only' },
+          { value: 'all',                   label: 'All Severities' },
+        ]
+      }
+    ],
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'sqli',
+    name: 'SQLi Scanner',
+    shortName: 'SQL Injection',
+    desc: 'Test for SQL injection vulnerabilities using SQLMap',
+    category: 'vuln',
+    path: '/tools/sqli',
+    endpoint: '/api/sqli/',
+    color: 'var(--red)',
+    placeholder: 'e.g. http://example.com/page?id=1',
+  },
+  {
+    id: 'xss',
+    name: 'XSS Scanner',
+    shortName: 'XSS',
+    desc: 'Detect cross-site scripting vulnerabilities',
+    category: 'vuln',
+    path: '/tools/xss',
+    endpoint: '/api/xss/',
+    color: 'var(--orange)',
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'wpscan',
+    name: 'WordPress Scanner',
+    shortName: 'WP Scan',
+    desc: 'Scan WordPress sites for outdated plugins and CVEs',
+    category: 'vuln',
+    path: '/tools/wpscan',
+    endpoint: '/api/wpscan/',
+    color: 'var(--orange)',
+    placeholder: 'e.g. example.com (must be WordPress)',
+  },
+  {
+    id: 'cors',
+    name: 'CORS Checker',
+    shortName: 'CORS',
+    desc: 'Test for Cross-Origin Resource Sharing misconfigurations',
+    category: 'vuln',
+    path: '/tools/cors',
+    endpoint: '/api/cors/',
+    color: 'var(--orange)',
+    isNew: true,
+    placeholder: 'e.g. https://api.example.com',
+  },
+  {
+    id: 'jwt',
+    name: 'JWT Scanner',
+    shortName: 'JWT Scan',
+    desc: 'Find and analyze JWT tokens for security weaknesses',
+    category: 'vuln',
+    path: '/tools/jwt',
+    endpoint: '/api/jwt/',
+    color: 'var(--purple)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'cookie',
+    name: 'Cookie Security',
+    shortName: 'Cookies',
+    desc: 'Inspect cookies for missing Secure, HttpOnly, and SameSite attributes',
+    category: 'vuln',
+    path: '/tools/cookie',
+    endpoint: '/api/cookie/',
+    color: 'var(--orange)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'clickjacking',
+    name: 'Clickjacking Tester',
+    shortName: 'Clickjacking',
+    desc: 'Test for X-Frame-Options and CSP frame-ancestors vulnerabilities',
+    category: 'vuln',
+    path: '/tools/clickjacking',
+    endpoint: '/api/clickjacking/',
+    color: 'var(--red)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'drupal',
+    name: 'Drupal Scanner',
+    shortName: 'Drupal',
+    desc: 'Detect Drupal installations and misconfigurations',
+    category: 'vuln',
+    path: '/tools/drupal',
+    endpoint: '/api/drupal/',
+    color: 'var(--orange)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'joomla',
+    name: 'Joomla Scanner',
+    shortName: 'Joomla',
+    desc: 'Detect Joomla installations and misconfigurations',
+    category: 'vuln',
+    path: '/tools/joomla',
+    endpoint: '/api/joomla/',
+    color: 'var(--orange)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+
+  // ── EXPLOIT TOOLS ──────────────────────────────────────────────────────────
+  {
+    id: 'hydra',
+    name: 'Password Auditor',
+    shortName: 'Hydra Brute',
+    desc: 'Brute force SSH/FTP/HTTP credentials with Hydra',
+    category: 'exploit',
+    path: '/tools/hydra',
+    endpoint: '/api/hydra/',
+    color: 'var(--red)',
+    fields: [
+      { name: 'service', type: 'select', label: 'Service', default: 'ssh',
+        options: [
+          { value: 'ssh',   label: 'SSH' },
+          { value: 'ftp',   label: 'FTP' },
+          { value: 'http',  label: 'HTTP' },
+          { value: 'https', label: 'HTTPS' },
+        ]
+      },
+      { name: 'wordlist', type: 'select', label: 'Wordlist', default: 'common',
+        options: [
+          { value: 'common',  label: 'Common Passwords' },
+          { value: 'rockyou', label: 'RockYou (large)' },
+        ]
+      }
+    ],
+    placeholder: 'e.g. 192.168.1.1 or example.com',
+  },
+
+  // ── OSINT ──────────────────────────────────────────────────────────────────
+  {
+    id: 'dork',
+    name: 'Google Dorking',
+    shortName: 'Google Dorks',
+    desc: 'Generate Google dorks to find exposed files and admin panels',
+    category: 'osint',
+    path: '/tools/dork',
+    endpoint: '/api/dork/',
+    color: 'var(--purple)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'harvester',
+    name: 'Email Harvester',
+    shortName: 'Emails',
+    desc: 'Find exposed emails and employee names via OSINT',
+    category: 'osint',
+    path: '/tools/harvester',
+    endpoint: '/api/harvester/',
+    color: 'var(--purple)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'shodan',
+    name: 'Shodan Lookup',
+    shortName: 'Shodan',
+    desc: 'Fetch Shodan intelligence and exposed device details',
+    category: 'osint',
+    path: '/tools/shodan',
+    endpoint: '/api/shodan/',
+    color: 'var(--red)',
+    isNew: true,
+    placeholder: 'e.g. example.com or IP',
+  },
+
+  // ── FUZZING ────────────────────────────────────────────────────────────────
+  {
+    id: 'gobuster',
+    name: 'URL Fuzzer',
+    shortName: 'Dir Fuzz',
+    desc: 'Brute force hidden directories and files with Gobuster',
+    category: 'fuzzing',
+    path: '/tools/gobuster',
+    endpoint: '/api/gobuster/',
+    color: 'var(--green)',
+    fields: [
+      { name: 'wordlist', type: 'select', label: 'Wordlist', default: 'common',
+        options: [
+          { value: 'common', label: 'Common (fast)' },
+          { value: 'big',    label: 'Big (thorough)' },
+        ]
+      }
+    ],
+    placeholder: 'e.g. example.com',
+  },
+  {
+    id: 'vhost',
+    name: 'Virtual Host Finder',
+    shortName: 'VHost Fuzz',
+    desc: 'Fuzz for hidden virtual hosts using ffuf',
+    category: 'fuzzing',
+    path: '/tools/vhost',
+    endpoint: '/api/vhost/',
+    color: 'var(--green)',
+    isNew: true,
+    placeholder: 'e.g. example.com',
+  },
+]
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+export function getToolById(id) {
+  return ALL_TOOLS.find(t => t.id === id)
+}
+
+export function getToolsByCategory(categoryId) {
+  return ALL_TOOLS.filter(t => t.category === categoryId)
+}
+
+export function getFrequentlyUsed() {
+  return ALL_TOOLS.filter(t => ['portscan', 'subdomain', 'nuclei', 'headers', 'ssl', 'sqli', 'dork'].includes(t.id))
+}
+
+export const TOOL_COUNT = ALL_TOOLS.length
