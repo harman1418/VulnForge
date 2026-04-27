@@ -25,12 +25,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'http-vendor': ['axios'],
-        },
-      },
+      output: {}
     },
   },
 })
