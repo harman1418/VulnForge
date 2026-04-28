@@ -224,6 +224,7 @@ function ResultRenderer({ tool, result }) {
   if (tool.id === 'robots')    return <RobotsResult result={result} />
   if (tool.id === 'cookie')    return <CookieResult result={result} />
   if (tool.id === 'clickjacking') return <ClickjackingResult result={result} />
+  if (tool.id === 'tech')      return <TechResult result={result} />
   return <JsonResult result={result} />
 }
 
@@ -525,6 +526,29 @@ function JsonResult({ result }) {
 }
 
 // ── New Tools ─────────────────────────────────────────────────────────────────
+function TechResult({ result }) {
+  const techs = result.technologies || {}
+  const keys = Object.keys(techs)
+  if (!keys.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No technologies detected.</p>
+  return (
+    <div>
+      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{result.total_categories || keys.length} categories detected</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {keys.map((cat, i) => (
+          <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 14px' }}>
+            <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{cat}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {techs[cat].map((t, j) => (
+                <span key={j} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text)', background: 'var(--bg)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: '4px' }}>{t}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function RobotsResult({ result }) {
   const disallowed = result.disallowed_count || 0
   const sensitive = result.sensitive_paths_found || []
