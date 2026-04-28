@@ -225,6 +225,14 @@ function ResultRenderer({ tool, result }) {
   if (tool.id === 'cookie')    return <CookieResult result={result} />
   if (tool.id === 'clickjacking') return <ClickjackingResult result={result} />
   if (tool.id === 'tech')      return <TechResult result={result} />
+  if (tool.id === 'dns_brute') return <DnsBruteResult result={result} />
+  if (tool.id === 'vhost')     return <VhostResult result={result} />
+  if (tool.id === 'api_scan')  return <ApiScanResult result={result} />
+  if (tool.id === 'drupal')    return <CmsResult result={result} name="Drupal" />
+  if (tool.id === 'joomla')    return <CmsResult result={result} name="Joomla" />
+  if (tool.id === 'harvester') return <HarvesterResult result={result} />
+  if (tool.id === 'shodan')    return <ShodanResult result={result} />
+  if (tool.id === 'reverse_ip') return <ReverseIpResult result={result} />
   return <JsonResult result={result} />
 }
 
@@ -624,6 +632,145 @@ function ClickjackingResult({ result }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', background: 'var(--bg3)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '6px', flexWrap: 'wrap', gap: '10px' }}>
           <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Content-Security-Policy</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: result.csp === 'Missing' ? 'var(--red)' : 'var(--green)', wordBreak: 'break-all' }}>{result.csp}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DnsBruteResult({ result }) {
+  const subs = result.subdomains || []
+  if (!subs.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No subdomains found via brute force.</p>
+  return (
+    <div>
+      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{subs.length} subdomains discovered</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '6px' }}>
+        {subs.map((s, i) => (
+          <div key={i} style={{ background: 'var(--bg3)', borderRadius: '6px', padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--blue)' }}>{s}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function VhostResult({ result }) {
+  const vhosts = result.vhosts || []
+  if (!vhosts.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No virtual hosts found.</p>
+  return (
+    <div>
+      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{vhosts.length} virtual hosts discovered</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '6px' }}>
+        {vhosts.map((v, i) => (
+          <div key={i} style={{ background: 'var(--bg3)', borderRadius: '6px', padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--purple)' }}>{v}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ReverseIpResult({ result }) {
+  const domains = result.domains || []
+  if (!domains.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No other domains hosted on this IP.</p>
+  return (
+    <div>
+      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{domains.length} domains hosted on the same server</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '6px' }}>
+        {domains.map((d, i) => (
+          <div key={i} style={{ background: 'var(--bg3)', borderRadius: '6px', padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text)' }}>{d}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ApiScanResult({ result }) {
+  const eps = result.endpoints || []
+  if (!eps.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No common API endpoints found.</p>
+  return (
+    <div>
+      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{eps.length} API endpoints exposed</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {eps.map((ep, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg3)', borderRadius: '6px', padding: '10px 14px', flexWrap: 'wrap', gap: '10px' }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--purple)' }}>{ep.endpoint}</span>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '600', color: ep.status_code === 200 ? 'var(--green)' : 'var(--orange)' }}>HTTP {ep.status_code}</span>
+              <span style={{ fontSize: '11px', color: 'var(--text3)' }}>{ep.length} bytes</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CmsResult({ result, name }) {
+  const detected = result.detected
+  const version = result.version || 'Unknown'
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: detected ? 'rgba(245,158,11,0.1)' : 'var(--green-dim)', border: `1px solid ${detected ? 'rgba(245,158,11,0.3)' : 'var(--green-bd)'}`, borderRadius: '10px', padding: '16px 20px' }}>
+      <div style={{ fontSize: '28px' }}>{detected ? '📦' : '✅'}</div>
+      <div>
+        <div style={{ fontSize: '15px', fontWeight: '700', color: detected ? 'var(--orange)' : 'var(--green)', marginBottom: '2px' }}>{detected ? `${name} Detected!` : `${name} Not Detected`}</div>
+        {detected && <div style={{ fontSize: '13px', color: 'var(--text2)' }}>Version: <span style={{ color: 'var(--text)', fontWeight: '600' }}>{version}</span></div>}
+      </div>
+    </div>
+  )
+}
+
+function HarvesterResult({ result }) {
+  const emails = result.emails || []
+  const hosts = result.hosts || []
+  return (
+    <div>
+      <SummaryRow items={[
+        { label: 'Emails Found', value: emails.length, color: emails.length > 0 ? 'var(--orange)' : 'var(--green)' },
+        { label: 'Hosts Found', value: hosts.length }
+      ]} />
+      {emails.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text2)', marginBottom: '8px' }}>Discovered Emails</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {emails.map((e, i) => <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', color: 'var(--orange)' }}>{e}</div>)}
+          </div>
+        </div>
+      )}
+      {hosts.length > 0 && (
+        <div>
+          <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text2)', marginBottom: '8px' }}>Discovered Hosts</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {hosts.map((h, i) => <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', color: 'var(--text)' }}>{h}</div>)}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ShodanResult({ result }) {
+  const ports = result.ports || []
+  const vulns = result.vulns || []
+  return (
+    <div>
+      <SummaryRow items={[
+        { label: 'IP Address', value: result.ip || 'Unknown' },
+        { label: 'Organization', value: result.org || 'Unknown' },
+        { label: 'OS', value: result.os || 'Unknown' }
+      ]} />
+      <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1', minWidth: '200px' }}>
+          <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text2)', marginBottom: '8px' }}>Open Ports ({ports.length})</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {ports.map((p, i) => <span key={i} style={{ background: 'var(--blue)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>{p}</span>)}
+            {!ports.length && <span style={{ fontSize: '12px', color: 'var(--text3)' }}>None</span>}
+          </div>
+        </div>
+        <div style={{ flex: '1', minWidth: '200px' }}>
+          <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text2)', marginBottom: '8px' }}>Vulnerabilities ({vulns.length})</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {vulns.map((v, i) => <span key={i} style={{ background: 'var(--red)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>{v}</span>)}
+            {!vulns.length && <span style={{ fontSize: '12px', color: 'var(--green)' }}>✓ No known CVEs via Shodan</span>}
+          </div>
         </div>
       </div>
     </div>
