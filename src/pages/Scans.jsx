@@ -15,6 +15,8 @@ export default function Scans() {
   const [bulkMode, setBulkMode] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false)
+  const [scanToDelete, setScanToDelete] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => { fetchScans() }, [])
@@ -49,25 +51,37 @@ export default function Scans() {
   const unselectAll   = () => setSelected([])
   const isAllSelected = filtered.length > 0 && filtered.every(s => selected.includes(s.id))
 
-  const deleteScan = async (id, e) => {
+  const requestDeleteScan = (id, e) => {
     e.stopPropagation()
-    if (!confirm('Delete this scan?')) return
+    setScanToDelete(id)
+  }
+
+  const deleteScan = async () => {
+    if (!scanToDelete) return
+    setDeleting(true)
     try {
-      await API.delete(`/api/history/${id}`)
-      setScans(prev => prev.filter(s => s.id !== id))
-      setSelected(prev => prev.filter(i => i !== id))
+      await API.delete(`/api/history/${scanToDelete}`)
+      setScans(prev => prev.filter(s => s.id !== scanToDelete))
+      setSelected(prev => prev.filter(i => i !== scanToDelete))
+      setScanToDelete(null)
     } catch (err) { console.error(err) }
+    setDeleting(false)
+  }
+
+  const requestBulkDelete = () => {
+    if (!selected.length) return
+    setShowBulkConfirm(true)
   }
 
   const bulkDelete = async () => {
     if (!selected.length) return
-    if (!confirm(`Delete ${selected.length} selected scans?`)) return
     setDeleting(true)
     try {
       await API.delete('/api/history/bulk/delete', { data: { scan_ids: selected } })
       setScans(prev => prev.filter(s => !selected.includes(s.id)))
       setSelected([])
       setBulkMode(false)
+      setShowBulkConfirm(false)
     } catch (err) { console.error(err) }
     setDeleting(false)
   }
@@ -122,6 +136,40 @@ export default function Scans() {
           </div>
         )}
 
+        {/* Bulk Delete Confirm Modal */}
+        {showBulkConfirm && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', padding: '16px' }}>
+            <div style={{ background: 'var(--bg2)', border: '1px solid var(--red)', borderRadius: '12px', padding: 'clamp(24px, 5vw, 36px)', maxWidth: '400px', width: '100%', textAlign: 'center', animation: 'fadeUp 0.2s ease' }}>
+              <div style={{ width: '44px', height: '44px', background: 'var(--red-dim)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="var(--red)"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text)', marginBottom: '8px' }}>Delete {selected.length} scans?</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text2)', marginBottom: '24px' }}>Are you sure you want to delete the selected scans? This cannot be undone.</p>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                <button className="btn btn-danger" onClick={bulkDelete} disabled={deleting}>{deleting ? 'Deleting...' : 'Yes, delete'}</button>
+                <button className="btn btn-secondary" onClick={() => setShowBulkConfirm(false)} disabled={deleting}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Single Delete Confirm Modal */}
+        {scanToDelete && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', padding: '16px' }}>
+            <div style={{ background: 'var(--bg2)', border: '1px solid var(--red)', borderRadius: '12px', padding: 'clamp(24px, 5vw, 36px)', maxWidth: '400px', width: '100%', textAlign: 'center', animation: 'fadeUp 0.2s ease' }}>
+              <div style={{ width: '44px', height: '44px', background: 'var(--red-dim)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="var(--red)"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text)', marginBottom: '8px' }}>Delete scan?</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text2)', marginBottom: '24px' }}>Are you sure you want to delete this scan report? This cannot be undone.</p>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                <button className="btn btn-danger" onClick={deleteScan} disabled={deleting}>{deleting ? 'Deleting...' : 'Yes, delete'}</button>
+                <button className="btn btn-secondary" onClick={() => setScanToDelete(null)} disabled={deleting}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Bulk Action Bar */}
         {bulkMode && (
           <ScrollReveal duration={300}>
@@ -131,7 +179,7 @@ export default function Scans() {
               </button>
               <span style={{ fontSize: '13px', color: 'var(--text2)' }}>{selected.length} of {filtered.length} selected</span>
               {selected.length > 0 && (
-                <button className="btn btn-sm btn-danger" onClick={bulkDelete} disabled={deleting} style={{ marginLeft: 'auto' }}>
+                <button className="btn btn-sm btn-danger" onClick={requestBulkDelete} disabled={deleting} style={{ marginLeft: 'auto' }}>
                   {deleting ? 'Deleting...' : `Delete ${selected.length}`}
                 </button>
               )}
@@ -196,7 +244,7 @@ export default function Scans() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                     <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '4px', border: `1px solid ${getRiskColor(scan.risk_level)}40`, background: getRiskColor(scan.risk_level) + '15', color: getRiskColor(scan.risk_level) }}>{scan.risk_level}</span>
                     <span style={{ fontSize: 'clamp(12px, 2vw, 13px)', fontWeight: '600', color: getRiskColor(scan.risk_level), minWidth: '38px', textAlign: 'right' }}>{scan.security_score}</span>
-                    <button onClick={e => deleteScan(scan.id, e)} className="btn btn-danger btn-sm" style={{ padding: '4px 8px', fontSize: '12px' }}>
+                    <button onClick={e => requestDeleteScan(scan.id, e)} className="btn btn-danger btn-sm" style={{ padding: '4px 8px', fontSize: '12px' }}>
                       <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                     </button>
                     {!bulkMode && <svg width="12" height="12" viewBox="0 0 16 16" fill="var(--text3)"><path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>}
