@@ -13,6 +13,7 @@ import Scans          from './pages/Scans'
 import ScanReport     from './pages/ScanReport'
 import ToolsPage      from './pages/ToolsPage'
 import ToolRunner     from './pages/ToolRunner'
+import CryptoLab      from './pages/CryptoLab'
 import './index.css'
 
 function PublicRoute({ children }) {
@@ -46,6 +47,7 @@ function AnimatedRoutes() {
         {/* Tools */}
         <Route path="/tools"           element={<ProtectedRoute><ToolsPage /></ProtectedRoute>} />
         <Route path="/tools/:toolId"   element={<ProtectedRoute><ToolRunner /></ProtectedRoute>} />
+        <Route path="/crypto"          element={<ProtectedRoute><CryptoLab /></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

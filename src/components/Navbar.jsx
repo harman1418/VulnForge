@@ -37,6 +37,7 @@ export default function Navbar() {
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/targets',   label: 'Targets' },
     { to: '/scans',     label: 'Scans' },
+    { to: '/crypto',    label: 'Crypto Lab' },
   ]
 
   const toolsCatDisplay = [
