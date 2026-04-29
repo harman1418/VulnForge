@@ -57,5 +57,5 @@ Traditional penetration testing requires installing 15+ tools, knowing complex C
 - [x] Matrix rain background (Global, App Pages, and Auth)
 
 ### 🟣 Deployment & SaaS
-- [ ] HTTPS — Nginx + Let's Encrypt
-- [ ] Deploy frontend to Vercel
+- [x] HTTPS — Nginx + Let's Encrypt
+- [x] Deploy frontend to Vercel
