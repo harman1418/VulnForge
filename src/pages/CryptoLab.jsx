@@ -11,11 +11,30 @@ const OPERATIONS = [
   { id: 'hex_decode', label: 'Hex Decode', type: 'decode' },
   { id: 'binary_encode', label: 'Binary Encode', type: 'encode' },
   { id: 'binary_decode', label: 'Binary Decode', type: 'decode' },
+  { id: 'morse_encode', label: 'Morse Encode', type: 'encode' },
+  { id: 'morse_decode', label: 'Morse Decode', type: 'decode' },
+  { id: 'html_encode', label: 'HTML Encode', type: 'encode' },
+  { id: 'html_decode', label: 'HTML Decode', type: 'decode' },
+  { id: 'rot13', label: 'ROT13', type: 'encode' },
+  { id: 'rot47', label: 'ROT47', type: 'encode' },
+  { id: 'reverse', label: 'Reverse String', type: 'encode' },
   { id: 'sha1', label: 'SHA-1 Hash', type: 'hash' },
   { id: 'sha256', label: 'SHA-256 Hash', type: 'hash' },
   { id: 'sha384', label: 'SHA-384 Hash', type: 'hash' },
   { id: 'sha512', label: 'SHA-512 Hash', type: 'hash' },
 ]
+
+const morseMap = {
+  'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+  'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+  'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+  'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+  'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---',
+  '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...',
+  '8': '---..', '9': '----.', ' ': '/'
+}
+const morseRev = Object.fromEntries(Object.entries(morseMap).map(([k,v]) => [v,k]))
+
 
 export default function CryptoLab() {
   const [input, setInput] = useState('')
@@ -64,6 +83,32 @@ export default function CryptoLab() {
             if (bin.length % 8 !== 0) throw new Error("Invalid binary")
             const binBytes = new Uint8Array(bin.match(/.{1,8}/g).map(byte => parseInt(byte, 2)))
             res = new TextDecoder().decode(binBytes)
+            break
+          case 'morse_encode':
+            res = input.toUpperCase().split('').map(c => morseMap[c] || c).join(' ')
+            break
+          case 'morse_decode':
+            res = input.split(' ').map(c => morseRev[c] || c).join('')
+            break
+          case 'html_encode':
+            res = input.replace(/[\u00A0-\u9999<>\&]/g, i => '&#'+i.charCodeAt(0)+';')
+            break
+          case 'html_decode':
+            const textarea = document.createElement('textarea')
+            textarea.innerHTML = input
+            res = textarea.value
+            break
+          case 'rot13':
+            res = input.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26))
+            break
+          case 'rot47':
+            res = input.split('').map(c => {
+              const j = c.charCodeAt(0)
+              return (j >= 33 && j <= 126) ? String.fromCharCode(33 + ((j + 14) % 94)) : c
+            }).join('')
+            break
+          case 'reverse':
+            res = input.split('').reverse().join('')
             break
           case 'sha1':
           case 'sha256':
