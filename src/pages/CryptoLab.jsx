@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import PageWrapper from '../components/PageWrapper'
 import ScrollReveal from '../components/ScrollReveal'
+import useScramble from '../hooks/useScramble'
 
 const OPERATIONS = [
   { id: 'base64_encode', label: 'Base64 Encode', type: 'encode' },
@@ -42,6 +43,7 @@ export default function CryptoLab() {
   const [operation, setOperation] = useState('base64_encode')
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+  const { ref: scrambleRef, trigger: triggerScramble } = useScramble('Crypto Lab')
 
   useEffect(() => {
     async function processText() {
@@ -174,7 +176,13 @@ export default function CryptoLab() {
                 </svg>
               </div>
               <div>
-                <h1 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--text)', margin: 0, letterSpacing: '-0.5px' }}>Crypto Lab</h1>
+                <h1 
+                  ref={scrambleRef} 
+                  onMouseEnter={triggerScramble}
+                  style={{ fontSize: '24px', fontWeight: '700', color: 'var(--text)', margin: 0, letterSpacing: '-0.5px', cursor: 'default' }}
+                >
+                  Crypto Lab
+                </h1>
                 <p style={{ fontSize: '14px', color: 'var(--text2)', margin: '4px 0 0 0' }}>Encode, decode, and hash strings locally in your browser.</p>
               </div>
             </div>
