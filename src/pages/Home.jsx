@@ -49,7 +49,12 @@ export default function Home() {
     setSelectedScan(null)
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await API.post('/api/auth/logout')
+    } catch (e) {
+      console.error(e)
+    }
     localStorage.removeItem('vulnforge_user')
     navigate('/')
   }
