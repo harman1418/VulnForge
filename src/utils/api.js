@@ -6,13 +6,22 @@ const API = axios.create({
   withCredentials: true // ✅ Crucial for sending HttpOnly cookies!
 })
 
-// Auto-logout on 401
+// Prevent infinite redirect loops — only redirect once
+let isRedirecting = false
+
 API.interceptors.response.use(
   res => res,
   err => {
     if (err.response?.status === 401) {
-      localStorage.clear()
-      window.location.href = '/login'
+      // Don't redirect if we're already on login/register/auth pages
+      const path = window.location.pathname
+      const isAuthPage = ['/login', '/register', '/verify', '/forgot-password', '/reset-password'].some(p => path.startsWith(p))
+
+      if (!isAuthPage && !isRedirecting) {
+        isRedirecting = true
+        localStorage.removeItem('vulnforge_user')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(err)
   }
