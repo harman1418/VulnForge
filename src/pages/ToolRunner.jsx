@@ -509,14 +509,18 @@ function NucleiResult({ result }) {
 }
 
 function GobusterResult({ result }) {
-  const paths = result.paths || result.found || []
+  const paths = result.findings || result.paths || result.found || []
   if (!paths.length) return <p style={{ color: 'var(--text2)', fontSize: '14px' }}>No paths found.</p>
   return (
     <div>
-      <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '12px' }}>{paths.length} path{paths.length !== 1 ? 's' : ''} discovered</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '6px' }}>
+      <SummaryRow items={[
+        { label: 'Paths Found', value: result.total_found || paths.length, color: 'var(--green)' },
+        { label: 'Wordlist', value: result.wordlist || 'common' },
+      ]} />
+      {result.note && <div className="alert alert-warning" style={{ marginBottom: '14px' }}>⚠ {result.note}</div>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
         {paths.map((p, i) => (
-          <div key={i} style={{ background: 'var(--bg3)', borderRadius: '6px', padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--green)' }}>
+          <div key={i} style={{ background: 'var(--bg3)', borderRadius: '6px', padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--green)', borderLeft: `3px solid ${String(p).includes('403') ? 'var(--orange)' : String(p).includes('301') || String(p).includes('302') ? 'var(--blue)' : 'var(--green)'}` }}>
             {typeof p === 'string' ? p : p.path || p.url}
           </div>
         ))}
