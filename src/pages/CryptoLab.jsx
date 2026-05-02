@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import PageWrapper from '../components/PageWrapper'
 import ScrollReveal from '../components/ScrollReveal'
 import useScramble from '../hooks/useScramble'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const OPERATIONS = [
   { id: 'base64_encode', label: 'Base64 Encode', type: 'encode' },
@@ -38,6 +39,7 @@ const morseRev = Object.fromEntries(Object.entries(morseMap).map(([k,v]) => [v,k
 
 
 export default function CryptoLab() {
+  usePageTitle('Crypto Lab')
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [operation, setOperation] = useState('base64_encode')
@@ -164,7 +166,7 @@ export default function CryptoLab() {
   const activeOpLabel = OPERATIONS.find(o => o.id === operation)?.label
 
   return (
-    <PageWrapper title="Crypto Lab | VulnForge">
+    <PageWrapper>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(16px, 4vw, 32px)' }}>
         
         <ScrollReveal>
