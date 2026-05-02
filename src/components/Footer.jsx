@@ -3,7 +3,7 @@ export default function Footer() {
     <footer style={{
       borderTop: '1px solid var(--border)',
       background: 'var(--bg2)',
-      padding: '16px 24px',
+      padding: 'clamp(14px, 2.5vw, 20px) clamp(16px, 4vw, 40px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -13,19 +13,30 @@ export default function Footer() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <img src="/VulnForge1.png" alt="VulnForge" style={{ height: '16px', width: '16px', objectFit: 'contain', opacity: 0.6 }} />
         <span style={{ fontSize: '13px', color: 'var(--text3)' }}>
-          VulnForge v1.0 — For authorized security testing only
+          © 2026 VulnForge v1.0 — For authorized security testing only.
         </span>
       </div>
 
       <div style={{ display: 'flex', gap: '12px' }}>
         {/* GitHub */}
         <a href="https://github.com/harman1418" target="_blank" rel="noreferrer"
-          style={{ fontSize: '13px', color: 'var(--text3)', display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 10px', borderRadius: '6px', border: '1px solid transparent', textDecoration: 'none', transition: 'all 0.2s' }}
+          style={{ 
+            fontSize: '13px', 
+            color: 'var(--text3)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            padding: '5px 10px', 
+            borderRadius: '6px', 
+            border: '1px solid transparent', 
+            textDecoration: 'none', 
+            transition: 'all 0.2s' 
+          }}
           onMouseEnter={e => {
-            e.currentTarget.style.color = '#fff'
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
-            e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
-            e.currentTarget.style.boxShadow = '0 0 12px rgba(255,255,255,0.15), 0 0 24px rgba(255,255,255,0.08)'
+            e.currentTarget.style.color = 'var(--text)'
+            e.currentTarget.style.borderColor = 'var(--border)'
+            e.currentTarget.style.background = 'var(--bg3)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.color = 'var(--text3)'
@@ -42,12 +53,23 @@ export default function Footer() {
 
         {/* LinkedIn */}
         <a href="https://linkedin.com/in/harmanjotcs" target="_blank" rel="noreferrer"
-          style={{ fontSize: '13px', color: 'var(--text3)', display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 10px', borderRadius: '6px', border: '1px solid transparent', textDecoration: 'none', transition: 'all 0.2s' }}
+          style={{ 
+            fontSize: '13px', 
+            color: 'var(--text3)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            padding: '5px 10px', 
+            borderRadius: '6px', 
+            border: '1px solid transparent', 
+            textDecoration: 'none', 
+            transition: 'all 0.2s' 
+          }}
           onMouseEnter={e => {
             e.currentTarget.style.color = '#0A66C2'
             e.currentTarget.style.borderColor = 'rgba(10,102,194,0.4)'
             e.currentTarget.style.background = 'rgba(10,102,194,0.08)'
-            e.currentTarget.style.boxShadow = '0 0 12px rgba(10,102,194,0.3), 0 0 24px rgba(10,102,194,0.15)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(10,102,194,0.15)'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.color = 'var(--text3)'
