@@ -70,7 +70,9 @@ export default function Home() {
     setCurrentPhase(1)
     setShowHistory(false)
 
-    const ws = new WebSocket(`wss://api.vulnforge.app/api/fullscan/ws/${target}`)
+    const token = localStorage.getItem('token') || ''
+    const scanType = 'medium' // Default for home page quick scan
+    const ws = new WebSocket(`wss://api.vulnforge.app/api/fullscan/ws/${scanType}/${target}?token=${token}`)
     wsRef.current = ws
 
     ws.onmessage = (event) => {

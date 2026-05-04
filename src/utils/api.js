@@ -9,6 +9,14 @@ const API = axios.create({
 // Prevent infinite redirect loops — only redirect once
 let isRedirecting = false
 
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 API.interceptors.response.use(
   res => res,
   err => {
@@ -20,6 +28,7 @@ API.interceptors.response.use(
       if (!isAuthPage && !isRedirecting) {
         isRedirecting = true
         localStorage.removeItem('vulnforge_user')
+        localStorage.removeItem('token')
         window.location.href = '/login'
       }
     }
