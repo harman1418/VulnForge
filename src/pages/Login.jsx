@@ -30,6 +30,13 @@ export default function Login() {
       const token = res.data.token || res.data.access_token
       const user = res.data.user
       
+      console.log('Login Response Details:', {
+        hasToken: !!token,
+        hasUser: !!user,
+        tokenType: typeof token,
+        userType: typeof user
+      })
+
       if (token && user) {
         localStorage.setItem('token', token)
         localStorage.setItem('vulnforge_user', JSON.stringify(user))
@@ -37,8 +44,7 @@ export default function Login() {
         navigate('/dashboard')
       } else {
         const raw = JSON.stringify(res.data)
-        console.error('Login failed: Token or user missing in response', raw)
-        setError(`Invalid response from server: ${raw.slice(0, 50)}...`)
+        setError(`Login failed: ${!token ? 'Missing Token' : 'Missing User'}. Data: ${raw.slice(0, 30)}...`)
       }
     } catch (err) { 
       console.error('Login Error:', err)
