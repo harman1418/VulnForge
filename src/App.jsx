@@ -18,7 +18,8 @@ import './index.css'
 
 function PublicRoute({ children }) {
   const user = JSON.parse(localStorage.getItem('vulnforge_user') || 'null')
-  return user ? <Navigate to="/dashboard" replace /> : children
+  const token = localStorage.getItem('token')
+  return (user && token) ? <Navigate to="/dashboard" replace /> : children
 }
 
 function ProtectedRoute({ children }) {
