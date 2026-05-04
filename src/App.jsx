@@ -23,7 +23,15 @@ function PublicRoute({ children }) {
 
 function ProtectedRoute({ children }) {
   const user = JSON.parse(localStorage.getItem('vulnforge_user') || 'null')
-  return user ? children : <Navigate to="/login" replace />
+  const token = localStorage.getItem('token')
+  
+  if (!user || !token) {
+    // Clear any partial state
+    localStorage.removeItem('vulnforge_user')
+    localStorage.removeItem('token')
+    return <Navigate to="/login" replace />
+  }
+  return children
 }
 
 function AnimatedRoutes() {
