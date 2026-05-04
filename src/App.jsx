@@ -19,15 +19,17 @@ import './index.css'
 function PublicRoute({ children }) {
   const user = JSON.parse(localStorage.getItem('vulnforge_user') || 'null')
   const token = localStorage.getItem('token')
+  console.log('PublicRoute:', { hasUser: !!user, hasToken: !!token })
   return (user && token) ? <Navigate to="/dashboard" replace /> : children
 }
 
 function ProtectedRoute({ children }) {
   const user = JSON.parse(localStorage.getItem('vulnforge_user') || 'null')
   const token = localStorage.getItem('token')
+  console.log('ProtectedRoute:', { hasUser: !!user, hasToken: !!token })
   
   if (!user || !token) {
-    // Clear any partial state
+    console.warn('Auth missing, redirecting to login...')
     localStorage.removeItem('vulnforge_user')
     localStorage.removeItem('token')
     return <Navigate to="/login" replace />
