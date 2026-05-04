@@ -36,8 +36,9 @@ export default function Login() {
         console.log('Storage set, navigating to dashboard...')
         navigate('/dashboard')
       } else {
-        console.error('Login failed: Token or user missing in response', res.data)
-        setError('Invalid response from server')
+        const raw = JSON.stringify(res.data)
+        console.error('Login failed: Token or user missing in response', raw)
+        setError(`Invalid response from server: ${raw.slice(0, 50)}...`)
       }
     } catch (err) { 
       console.error('Login Error:', err)
