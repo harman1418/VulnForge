@@ -23,12 +23,26 @@ export default function Login() {
     if (!form.email || !form.password) { setError('Please fill in all fields'); return }
     setLoading(true); setError('')
     try {
+      console.log('Attempting login for:', form.email)
       const res = await API.post('/api/auth/login', form)
+      console.log('Login Response:', res.data)
+      
       const token = res.data.token || res.data.access_token
-      if (token) localStorage.setItem('token', token)
-      if (res.data.user) localStorage.setItem('vulnforge_user', JSON.stringify(res.data.user))
-      navigate('/dashboard')
-    } catch (err) { setError(err.response?.data?.detail || 'Login failed') }
+      const user = res.data.user
+      
+      if (token && user) {
+        localStorage.setItem('token', token)
+        localStorage.setItem('vulnforge_user', JSON.stringify(user))
+        console.log('Storage set, navigating to dashboard...')
+        navigate('/dashboard')
+      } else {
+        console.error('Login failed: Token or user missing in response', res.data)
+        setError('Invalid response from server')
+      }
+    } catch (err) { 
+      console.error('Login Error:', err)
+      setError(err.response?.data?.detail || 'Login failed') 
+    }
     setLoading(false)
   }
 

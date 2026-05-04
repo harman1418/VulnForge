@@ -40,12 +40,26 @@ export function VerifyOTP() {
     if (!otp || otp.length !== 6) { setError('Enter the 6-digit code'); return }
     setLoading(true); setError('')
     try {
+      console.log('Attempting OTP verification for:', email)
       const res = await API.post('/api/auth/verify-otp', { email, otp })
+      console.log('Verify Response:', res.data)
+      
       const token = res.data.token || res.data.access_token
-      if (token) localStorage.setItem('token', token)
-      if (res.data.user) localStorage.setItem('vulnforge_user', JSON.stringify(res.data.user))
-      navigate('/dashboard')
-    } catch (err) { setError(err.response?.data?.detail || 'Invalid or expired OTP') }
+      const user = res.data.user
+      
+      if (token && user) {
+        localStorage.setItem('token', token)
+        localStorage.setItem('vulnforge_user', JSON.stringify(user))
+        console.log('Storage set, navigating to dashboard...')
+        navigate('/dashboard')
+      } else {
+        console.error('Verification failed: Token or user missing in response', res.data)
+        setError('Invalid response from server')
+      }
+    } catch (err) { 
+      console.error('Verify Error:', err)
+      setError(err.response?.data?.detail || 'Invalid or expired OTP') 
+    }
     setLoading(false)
   }
 
