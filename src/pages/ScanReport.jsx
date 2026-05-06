@@ -43,6 +43,198 @@ export default function ScanReport() {
     setDownloading(false)
   }
 
+  // ── Client-side JSON Exporter ──────────────────────────────────────────────
+  const downloadJSON = () => {
+    const dataStr = JSON.stringify(scan, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `vulnforge_${scan?.target || id}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  }
+
+  // ── Client-side CSV/XLSX Exporter ──────────────────────────────────────────
+  const downloadCSV = () => {
+    let csvRows = []
+    
+    // Header section
+    csvRows.push("Category,Item,Details / Severity,Description / Value")
+    csvRows.push(`Audit Target,${scan?.target || 'Unknown'},Risk Rating: ${scan?.ai_analysis?.risk_level || 'UNKNOWN'},Security Score: ${scan?.ai_analysis?.security_score || 0}/100`)
+    csvRows.push("") // spacing row
+
+    // Open Ports
+    csvRows.push("--- NETWORK INFRASTRUCTURE (OPEN PORTS) ---")
+    const ports = scan?.scan_results?.portscan?.ports || []
+    if (ports.length > 0) {
+      ports.forEach(p => {
+        csvRows.push(`Open Port,${p.port}/${p.protocol},${p.service},${(p.version || '').replace(/,/g, ' ')}`)
+      })
+    } else {
+      csvRows.push("Open Port,None,No open ports detected,")
+    }
+    csvRows.push("") // spacing row
+
+    // Subdomains
+    csvRows.push("--- DISCOVERED SUBDOMAINS ---")
+    const subdomains = scan?.scan_results?.subdomain?.subdomains || []
+    if (subdomains.length > 0) {
+      subdomains.forEach(s => {
+        csvRows.push(`Subdomain,${s},Alive,`)
+      })
+    } else {
+      csvRows.push("Subdomain,None,No subdomains discovered,")
+    }
+    csvRows.push("") // spacing row
+
+    // AI Critical Findings
+    csvRows.push("--- AI SECURITY AUDIT VULNERABILITIES ---")
+    const findings = scan?.ai_analysis?.critical_findings || []
+    if (findings.length > 0) {
+      findings.forEach(f => {
+        const titleClean = f.title.replace(/"/g, '""')
+        const descClean = f.description.replace(/"/g, '""')
+        csvRows.push(`Security Finding,"${titleClean}",[${f.severity}],"${descClean}"`)
+      })
+    } else {
+      csvRows.push("Security Finding,None,No security findings,")
+    }
+    csvRows.push("") // spacing row
+
+    // Remediation Steps
+    csvRows.push("--- SECURITY REMEDIATION STEPS ---")
+    const remediation = scan?.ai_analysis?.remediation_steps || []
+    if (remediation.length > 0) {
+      remediation.forEach(r => {
+        const issueClean = r.issue.replace(/"/g, '""')
+        const fixClean = r.fix.replace(/"/g, '""')
+        csvRows.push(`Remediation Step,"${issueClean}",Priority: ${r.priority},"${fixClean}"`)
+      })
+    }
+
+    const csvContent = csvRows.join("\n")
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `vulnforge_${scan?.target || id}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  }
+
+  // ── Client-side HTML Single-Page Report Exporter ───────────────────────────
+  const downloadHTML = () => {
+    const ai = scan?.ai_analysis || {}
+    const ports = scan?.scan_results?.portscan?.ports || []
+    const subdomains = scan?.scan_results?.subdomain?.subdomains || []
+    const findings = ai.critical_findings || []
+    const remediation = ai.remediation_steps || []
+    const target = scan?.target || 'Unknown'
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VulnForge Audit Report - ${target}</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #030712; color: #f3f4f6; padding: 40px 20px; line-height: 1.6; }
+        .wrapper { max-width: 900px; margin: 0 auto; background: #0b1329; border: 1px solid #00ff8833; border-radius: 12px; padding: 40px; box-shadow: 0 10px 40px rgba(0,255,136,0.08); }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; border-bottom: 2px solid #00ff88; padding-bottom: 15px; margin-top: 0; }
+        h2 { font-size: 20px; color: #00aaff; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-top: 35px; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #070d19; border: 1px solid #1e293b; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .score { font-size: 36px; font-weight: 800; color: #ff3355; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-critical { background: rgba(255,51,85,0.15); color: #ff3355; border: 1px solid #ff3355; }
+        .badge-high { background: rgba(255,102,51,0.15); color: #ff6633; border: 1px solid #ff6633; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; border: 1px solid #1e293b; text-align: left; }
+        th { background: #070d19; color: #94a3b8; font-size: 11px; text-transform: uppercase; }
+        .port-number { color: #00ff88; font-weight: bold; font-family: monospace; }
+        .card { background: #070d19; border: 1px solid #1e293b; border-left: 4px solid #ff3355; padding: 18px; border-radius: 6px; margin-bottom: 15px; }
+        .remedy-card { background: #070d19; border: 1px solid #1e293b; border-left: 4px solid #00ff88; padding: 18px; border-radius: 6px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>SECURITY AUDIT REPORT</h1>
+        <div class="meta-grid">
+            <div>
+                <div style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Target Scope</div>
+                <div style="font-size: 20px; font-weight: bold; margin-top: 4px;">${target}</div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 8px;">Generated on: ${new Date(scan?.created_at).toLocaleString()}</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Security Score</div>
+                <div class="score">${ai.security_score || 0}<span style="font-size: 18px; color: #64748b;">/100</span></div>
+                <div style="margin-top: 8px;"><span class="badge badge-critical">${ai.risk_level || 'UNKNOWN'} RISK</span></div>
+            </div>
+        </div>
+
+        <h2>Executive Summary</h2>
+        <p style="color: #cbd5e1; font-size: 15px; line-height: 1.8;">${ai.executive_summary || 'No summary available.'}</p>
+
+        <h2>Network Audit (Open Ports)</h2>
+        <table>
+            <thead>
+                <tr><th>Port</th><th>Protocol</th><th>Service</th><th>Version</th></tr>
+            </thead>
+            <tbody>
+                ${ports.map(p => `<tr><td class="port-number">${p.port}</td><td>${p.protocol}</td><td>${p.service}</td><td>${p.version || '—'}</td></tr>`).join('')}
+                ${ports.length === 0 ? '<tr><td colspan="4" style="text-align:center; color:#64748b;">No open ports identified.</td></tr>' : ''}
+            </tbody>
+        </table>
+
+        <h2>Subdomain Mapping</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px;">
+            ${subdomains.map(s => `<span style="background: #070d19; border: 1px solid #1e293b; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: #00aaff;">${s}</span>`).join('')}
+            ${subdomains.length === 0 ? '<span style="color:#64748b;">No subdomains discovered.</span>' : ''}
+        </div>
+
+        <h2>Vulnerability Findings</h2>
+        ${findings.map(f => `
+            <div class="card" style="border-left-color: ${f.severity === 'CRITICAL' || f.severity === 'HIGH' ? '#ff3355' : '#ffcc00'}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 16px;">${f.title}</strong>
+                    <span class="badge ${f.severity === 'CRITICAL' || f.severity === 'HIGH' ? 'badge-critical' : 'badge-high'}">${f.severity}</span>
+                </div>
+                <p style="color: #94a3b8; font-size: 13px; margin: 8px 0 0 0;">${f.description}</p>
+            </div>
+        `).join('')}
+
+        <h2>Security Remediation Guideline</h2>
+        ${remedyHtml(remediation)}
+    </div>
+</body>
+</html>`
+
+    function remedyHtml(remedies) {
+        return remedies.map(r => `
+            <div class="remedy-card" style="border-left-color: ${r.priority === 'HIGH' ? '#ff3355' : '#00ff88'}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 15px;">Issue: ${r.issue}</strong>
+                    <span class="badge" style="background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid #00ff88;">${r.priority} PRIORITY</span>
+                </div>
+                <p style="color: #cbd5e1; font-size: 13px; margin: 8px 0 0 0;"><strong>Fix:</strong> ${r.fix}</p>
+            </div>
+        `).join('')
+    }
+
+    const blob = new Blob([htmlContent], { type: 'text/html' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `vulnforge_${target.replace('.', '_')}_report.html`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  }
+
   const getRiskColor = (risk) => {
     if (risk === 'CRITICAL') return '#ff3355'
     if (risk === 'HIGH')     return '#ff6633'
@@ -398,7 +590,6 @@ export default function ScanReport() {
           </button>
         </div>
 
-        {/* Report Customization Modal */}
         <GenerateReportModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -406,7 +597,15 @@ export default function ScanReport() {
           position={modalPosition}
           onGenerate={async (config) => {
             setIsModalOpen(false)
-            await downloadPDF()
+            if (config.format === 'JSON') {
+              downloadJSON()
+            } else if (config.format === 'CSV' || config.format === 'XLSX') {
+              downloadCSV()
+            } else if (config.format === 'HTML') {
+              downloadHTML()
+            } else {
+              await downloadPDF()
+            }
           }}
         />
 
