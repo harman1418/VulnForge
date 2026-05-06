@@ -23,13 +23,62 @@ const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
 
     if (!isOpen) return null;
 
+    // --- Premium Styling Definitions ---
+    const overlayStyle = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(2, 4, 6, 0.85)',
+        backdropFilter: 'blur(12px)',
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+    };
+
+    const modalStyle = {
+        background: '#060d12',
+        border: '1px solid #00ff8844',
+        borderRadius: '12px',
+        boxShadow: '0 0 35px rgba(0, 255, 136, 0.15)',
+        width: '100%',
+        maxWidth: '520px',
+        maxHeight: '90vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        color: '#fff',
+        fontFamily: 'Share Tech Mono, monospace',
+    };
+
+    const headerStyle = {
+        padding: '16px 24px',
+        borderBottom: '1px solid #00ff8822',
+        background: '#0a1520',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'between',
+    };
+
+    const sectionTitleStyle = {
+        fontFamily: 'Orbitron, sans-serif',
+        fontSize: '11px',
+        color: '#7a9a8a',
+        letterSpacing: '1.5px',
+        marginBottom: '10px',
+        textTransform: 'uppercase',
+    };
+
     return (
         <AnimatePresence>
             <motion.div 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
+                style={overlayStyle}
                 onClick={onClose}
             >
                 <motion.div 
@@ -37,40 +86,52 @@ const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 20 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[#1e1e2e] border border-gray-700 rounded-xl shadow-2xl w-full max-w-[550px] overflow-hidden flex flex-col max-h-[90vh]"
+                    style={modalStyle}
                 >
                     {/* Header */}
-                    <div className="px-6 py-4 border-b border-gray-700 bg-[#252538] flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <FileText className="text-[#0066cc]" size={20} />
-                            <h2 className="text-xl font-bold text-gray-100">Generate report</h2>
+                    <div style={{ ...headerStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <FileText style={{ color: '#00ff88' }} size={20} />
+                            <h2 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '18px', fontWeight: '700', color: '#fff', margin: 0 }}>GENERATE REPORT</h2>
                         </div>
-                        <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
-                            <X size={20} />
+                        <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#7a9a8a', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}>
+                            <X size={20} onMouseEnter={e => e.currentTarget.style.color = '#ff3355'} onMouseLeave={e => e.currentTarget.style.color = '#7a9a8a'} />
                         </button>
                     </div>
 
-                    {/* Content Scrollable Area */}
-                    <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-7">
+                    {/* Content */}
+                    <div style={{ padding: '24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
                         
                         {/* Target Info */}
                         {targetDomain && (
-                            <div className="bg-[#0066cc]/10 border border-[#0066cc]/30 rounded-lg p-3 flex items-center gap-3">
-                                <Settings className="text-[#0066cc]" size={18} />
-                                <span className="text-[#0066cc] text-sm font-medium">Target: {targetDomain}</span>
+                            <div style={{ background: 'rgba(0, 170, 255, 0.08)', border: '1px solid rgba(0, 170, 255, 0.25)', borderRadius: '6px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Settings style={{ color: '#00aaff' }} size={16} />
+                                <span style={{ color: '#00aaff', fontSize: '13px', fontWeight: '500' }}>Active Target Scope: <strong style={{ color: '#fff' }}>{targetDomain}</strong></span>
                             </div>
                         )}
 
                         {/* Report Type */}
                         <div>
-                            <h3 className="text-[13px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">Report Type</h3>
-                            <div className="grid grid-cols-2 gap-3">
-                                {['raw', 'editable'].map((type) => (
-                                    <label key={type} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${reportType === type ? 'bg-[#0066cc]/20 border-[#0066cc] text-white' : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:bg-gray-800'}`}>
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${reportType === type ? 'border-[#0066cc]' : 'border-gray-500'}`}>
-                                            {reportType === type && <div className="w-2 h-2 rounded-full bg-[#0066cc]" />}
+                            <h3 style={sectionTitleStyle}>Report Type</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                {[
+                                    { id: 'raw', title: 'Raw scan results', desc: 'Direct technical checks' },
+                                    { id: 'editable', title: 'Editable pentest report', desc: 'Curated executive view' }
+                                ].map((type) => (
+                                    <label key={type.id} 
+                                        onClick={() => setReportType(type.id)}
+                                        style={{ 
+                                            display: 'flex', flexDirection: 'column', gap: '6px', padding: '14px', borderRadius: '8px', border: reportType === type.id ? '1px solid #00ff88' : '1px solid #0a2a1a', 
+                                            background: reportType === type.id ? 'rgba(0, 255, 136, 0.05)' : '#0a1520', cursor: 'pointer', transition: 'all 0.2s' 
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ width: '14px', height: '14px', borderRadius: '50%', border: reportType === type.id ? '1px solid #00ff88' : '1px solid #7a9a8a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                {reportType === type.id && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ff88' }} />}
+                                            </div>
+                                            <span style={{ fontSize: '13px', fontWeight: 'bold', color: reportType === type.id ? '#00ff88' : '#fff' }}>{type.title}</span>
                                         </div>
-                                        <span className="text-sm font-medium">{type === 'raw' ? 'Raw scan results' : 'Editable pentest report'}</span>
+                                        <span style={{ fontSize: '11px', color: '#7a9a8a', paddingLeft: '24px' }}>{type.desc}</span>
                                     </label>
                                 ))}
                             </div>
@@ -78,42 +139,48 @@ const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
 
                         {/* Report Format */}
                         <div>
-                            <h3 className="text-[13px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">Report Format</h3>
-                            <div className="flex flex-wrap gap-5">
+                            <h3 style={sectionTitleStyle}>Report Format</h3>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
                                 {['PDF', 'HTML', 'JSON', 'CSV', 'XLSX'].map((format) => (
-                                    <label key={format} className="flex items-center gap-2 cursor-pointer">
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${reportFormat === format ? 'border-[#0066cc]' : 'border-gray-500'}`}>
-                                            {reportFormat === format && <div className="w-2 h-2 rounded-full bg-[#0066cc]" />}
+                                    <label key={format} 
+                                        onClick={() => setReportFormat(format)}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                    >
+                                        <div style={{ width: '14px', height: '14px', borderRadius: '50%', border: reportFormat === format ? '1px solid #00ff88' : '1px solid #7a9a8a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {reportFormat === format && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ff88' }} />}
                                         </div>
-                                        <span className={`text-sm font-medium ${reportFormat === format ? 'text-white' : 'text-gray-400'}`}>{format}</span>
+                                        <span style={{ fontSize: '13px', color: reportFormat === format ? '#00ff88' : '#7a9a8a', fontWeight: 'bold' }}>{format}</span>
                                     </label>
                                 ))}
                             </div>
                         </div>
 
                         {/* Group Findings By */}
-                        <div className="border-t border-gray-700 pt-6">
-                            <h3 className="text-[13px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">Group findings by</h3>
-                            <div className="flex gap-6">
+                        <div>
+                            <h3 style={sectionTitleStyle}>Group findings by</h3>
+                            <div style={{ display: 'flex', gap: '24px' }}>
                                 {['targets', 'vulnerability'].map((group) => (
-                                    <label key={group} className="flex items-center gap-2 cursor-pointer">
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${grouping === group ? 'border-[#0066cc]' : 'border-gray-500'}`}>
-                                            {grouping === group && <div className="w-2 h-2 rounded-full bg-[#0066cc]" />}
+                                    <label key={group} 
+                                        onClick={() => setGrouping(group)}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                    >
+                                        <div style={{ width: '14px', height: '14px', borderRadius: '50%', border: grouping === group ? '1px solid #00ff88' : '1px solid #7a9a8a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {grouping === group && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00ff88' }} />}
                                         </div>
-                                        <span className={`text-sm font-medium capitalize ${grouping === group ? 'text-white' : 'text-gray-400'}`}>{group}</span>
+                                        <span style={{ fontSize: '13px', color: grouping === group ? '#00ff88' : '#7a9a8a', textTransform: 'capitalize', fontWeight: 'bold' }}>{group}</span>
                                     </label>
                                 ))}
                             </div>
                         </div>
 
                         {/* Filters */}
-                        <div className="border-t border-gray-700 pt-6">
-                            <h3 className="text-[13px] font-semibold text-gray-400 mb-3 uppercase tracking-wider flex items-center gap-2">
-                                <Filter size={16} /> Filters
+                        <div>
+                            <h3 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Filter size={14} style={{ color: '#00ff88' }} /> Filters
                             </h3>
-                            <div className="space-y-3 bg-[#252538] p-4 rounded-lg border border-gray-700">
+                            <div style={{ background: '#0a1520', border: '1px solid #0a2a1a', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {[
-                                    { id: 'reproduce', label: 'Include How to reproduce section' },
+                                    { id: 'reproduce', label: 'Include "How to reproduce" section' },
                                     { id: 'informational', label: 'Include Informational findings' },
                                     { id: 'falsePositives', label: 'Include False Positives findings' },
                                     { id: 'ignored', label: 'Include Ignored findings' },
@@ -121,35 +188,48 @@ const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
                                     { id: 'accepted', label: 'Include Accepted findings' },
                                     { id: 'fixed', label: 'Include Fixed findings' },
                                 ].map((filter) => (
-                                    <label key={filter.id} className="flex items-center gap-3 cursor-pointer group">
-                                        <div 
-                                            className={`w-5 h-5 rounded flex items-center justify-center transition-colors border ${filters[filter.id] ? 'bg-[#0066cc] border-[#0066cc]' : 'bg-transparent border-gray-500 group-hover:border-gray-400'}`}
-                                            onClick={() => handleFilterChange(filter.id)}
-                                        >
-                                            {filters[filter.id] && <CheckCircle size={14} className="text-white" />}
+                                    <div key={filter.id} 
+                                        onClick={() => handleFilterChange(filter.id)}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+                                    >
+                                        <div style={{ 
+                                            width: '18px', height: '18px', borderRadius: '4px', border: filters[filter.id] ? '1px solid #00ff88' : '1px solid #7a9a8a', 
+                                            background: filters[filter.id] ? 'rgba(0, 255, 136, 0.1)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                                        }}>
+                                            {filters[filter.id] && <CheckCircle size={12} style={{ color: '#00ff88' }} />}
                                         </div>
-                                        <span className={`text-sm select-none ${filters[filter.id] ? 'text-gray-200 font-medium' : 'text-gray-400'}`}>{filter.label}</span>
-                                    </label>
+                                        <span style={{ fontSize: '12px', color: filters[filter.id] ? '#fff' : '#7a9a8a', userSelect: 'none' }}>{filter.label}</span>
+                                    </div>
                                 ))}
                             </div>
                         </div>
 
                     </div>
 
-                    {/* Footer / Actions */}
-                    <div className="px-6 py-4 border-t border-gray-700 bg-[#252538] flex items-center justify-between">
+                    {/* Footer */}
+                    <div style={{ padding: '16px 24px', borderTop: '1px solid #0a2a1a', background: '#0a1520', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <button 
                             onClick={onClose}
-                            className="px-5 py-2.5 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 font-medium text-sm transition-colors"
+                            style={{ 
+                                background: 'transparent', border: '1px solid #0a2a1a', borderRadius: '6px', padding: '10px 20px', 
+                                color: '#7a9a8a', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' 
+                            }}
+                            onMouseEnter={e => { e.target.style.borderColor = '#ff3355'; e.target.style.color = '#ff3355' }}
+                            onMouseLeave={e => { e.target.style.borderColor = '#0a2a1a'; e.target.style.color = '#7a9a8a' }}
                         >
-                            Cancel
+                            CANCEL
                         </button>
                         <button 
                             onClick={() => onGenerate({ type: reportType, format: reportFormat, grouping, filters, target: targetDomain })}
-                            className="px-6 py-2.5 rounded-lg bg-[#e3c15f] hover:bg-[#d4b355] text-gray-900 font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#e3c15f]/20 transition-all active:scale-95"
+                            style={{ 
+                                background: '#00ff88', border: 'none', borderRadius: '6px', padding: '10px 24px', 
+                                color: '#000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 0 15px rgba(0, 255, 136, 0.2)' 
+                            }}
+                            onMouseEnter={e => e.target.style.background = '#00cc66'}
+                            onMouseLeave={e => e.target.style.background = '#00ff88'}
                         >
-                            <Download size={16} />
-                            Generate Report
+                            <Download size={14} />
+                            GENERATE REPORT
                         </button>
                     </div>
                 </motion.div>
