@@ -19,6 +19,26 @@ export default function Login() {
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t) }, [])
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('oauth_success') === 'true') {
+      setLoading(true)
+      API.get('/api/auth/me')
+        .then(res => {
+          if (res.data.status === 'success' && res.data.user) {
+            localStorage.setItem('token', 'cookie_session')
+            localStorage.setItem('vulnforge_user', JSON.stringify(res.data.user))
+            navigate('/dashboard')
+          }
+        })
+        .catch(err => {
+          console.error('OAuth sync error:', err)
+          setError('Failed to synchronize OAuth session')
+          setLoading(false)
+        })
+    }
+  }, [location, navigate])
+
   const handleLogin = async () => {
     if (!form.email || !form.password) { setError('Please fill in all fields'); return }
     setLoading(true); setError('')
