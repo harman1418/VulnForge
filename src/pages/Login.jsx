@@ -27,24 +27,22 @@ export default function Login() {
       const res = await API.post('/api/auth/login', form)
       console.log('Login Response:', res.data)
       
-      const token = res.data.token || res.data.access_token
       const user = res.data.user
       
       console.log('Login Response Details:', {
-        hasToken: !!token,
+        status: res.data.status,
         hasUser: !!user,
-        tokenType: typeof token,
         userType: typeof user
       })
 
-      if (token && user) {
-        localStorage.setItem('token', token)
+      if (res.data.status === 'success' && user) {
+        localStorage.setItem('token', 'cookie_session') // Satisfy frontend routing checks
         localStorage.setItem('vulnforge_user', JSON.stringify(user))
         console.log('Storage set, navigating to dashboard...')
         navigate('/dashboard')
       } else {
         const raw = JSON.stringify(res.data)
-        setError(`Login failed: ${!token ? 'Missing Token' : 'Missing User'}. Data: ${raw.slice(0, 30)}...`)
+        setError(`Login failed: Missing User. Data: ${raw.slice(0, 30)}...`)
       }
     } catch (err) { 
       console.error('Login Error:', err)

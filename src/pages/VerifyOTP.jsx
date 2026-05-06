@@ -44,16 +44,15 @@ export function VerifyOTP() {
       const res = await API.post('/api/auth/verify-otp', { email, otp })
       console.log('Verify Response:', res.data)
       
-      const token = res.data.token || res.data.access_token
       const user = res.data.user
       
-      if (token && user) {
-        localStorage.setItem('token', token)
+      if (res.data.status === 'success' && user) {
+        localStorage.setItem('token', 'cookie_session')
         localStorage.setItem('vulnforge_user', JSON.stringify(user))
         console.log('Storage set, navigating to dashboard...')
         navigate('/dashboard')
       } else {
-        console.error('Verification failed: Token or user missing in response', res.data)
+        console.error('Verification failed: User missing in response', res.data)
         setError('Invalid response from server')
       }
     } catch (err) { 
