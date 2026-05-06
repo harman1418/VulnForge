@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import PageWrapper from '../components/PageWrapper'
 import API from '../utils/api'
+import GenerateReportModal from '../components/GenerateReportModal'
 
 export default function ScanReport() {
   const { id } = useParams()
   const [scan, setScan] = useState(null)
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => { fetchScan() }, [id])
@@ -154,7 +156,7 @@ export default function ScanReport() {
           </div>
 
           {/* Download button */}
-          <button onClick={downloadPDF} disabled={downloading}
+          <button onClick={() => setIsModalOpen(true)} disabled={downloading}
             style={{ background: '#00ff88', border: 'none', borderRadius: '6px', padding: '10px 24px', color: '#000', fontFamily: 'Orbitron, sans-serif', fontSize: '12px', fontWeight: '700', letterSpacing: '1px', cursor: downloading ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: '0 0 15px #00ff8833', opacity: downloading ? 0.7 : 1 }}
             onMouseEnter={e => { if (!downloading) e.target.style.background = '#00cc66' }}
             onMouseLeave={e => { if (!downloading) e.target.style.background = '#00ff88' }}
@@ -386,7 +388,7 @@ export default function ScanReport() {
 
         {/* ── Bottom Download ───────────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', padding: '20px 0' }}>
-          <button onClick={downloadPDF} disabled={downloading}
+          <button onClick={() => setIsModalOpen(true)} disabled={downloading}
             style={{ background: '#00ff88', border: 'none', borderRadius: '6px', padding: '14px 40px', color: '#000', fontFamily: 'Orbitron, sans-serif', fontSize: '13px', fontWeight: '700', letterSpacing: '2px', cursor: downloading ? 'not-allowed' : 'pointer', boxShadow: '0 0 20px #00ff8833', transition: 'all 0.2s', opacity: downloading ? 0.7 : 1 }}
             onMouseEnter={e => { if (!downloading) e.target.style.background = '#00cc66' }}
             onMouseLeave={e => { if (!downloading) e.target.style.background = '#00ff88' }}
@@ -394,6 +396,17 @@ export default function ScanReport() {
             {downloading ? '⟳ DOWNLOADING...' : '📄 DOWNLOAD FULL REPORT (PDF)'}
           </button>
         </div>
+
+        {/* Report Customization Modal */}
+        <GenerateReportModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          targetDomain={scan?.target}
+          onGenerate={async (config) => {
+            setIsModalOpen(false)
+            await downloadPDF()
+          }}
+        />
 
       </div>
     </PageWrapper>
