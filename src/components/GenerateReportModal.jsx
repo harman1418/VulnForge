@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, FileText, CheckCircle, Settings, Filter } from 'lucide-react';
 
-const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
+const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain, position }) => {
     const [reportType, setReportType] = useState('raw');
     const [reportFormat, setReportFormat] = useState('PDF');
     const [grouping, setGrouping] = useState('targets');
@@ -34,9 +34,10 @@ const GenerateReportModal = ({ isOpen, onClose, onGenerate, targetDomain }) => {
         backdropFilter: 'blur(12px)',
         zIndex: 9999,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: position === 'top' ? 'flex-start' : (position === 'bottom' ? 'flex-end' : 'center'),
         justifyContent: 'center',
-        padding: '20px',
+        padding: position === 'top' ? '80px 20px 20px 20px' : (position === 'bottom' ? '20px 20px 80px 20px' : '20px'),
+        overflowY: 'auto',
     };
 
     const modalStyle = {
