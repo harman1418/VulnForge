@@ -354,7 +354,7 @@ export default function ScanReport() {
             onMouseEnter={e => { if (!downloading) e.target.style.background = '#00cc66' }}
             onMouseLeave={e => { if (!downloading) e.target.style.background = '#00ff88' }}
           >
-            {downloading ? '⟳ DOWNLOADING...' : '📄 DOWNLOAD PDF REPORT'}
+            {downloading ? '⟳ GENERATING...' : '📄 GENERATE REPORT'}
           </button>
         </div>
 
@@ -586,7 +586,7 @@ export default function ScanReport() {
             onMouseEnter={e => { if (!downloading) e.target.style.background = '#00cc66' }}
             onMouseLeave={e => { if (!downloading) e.target.style.background = '#00ff88' }}
           >
-            {downloading ? '⟳ DOWNLOADING...' : '📄 DOWNLOAD FULL REPORT (PDF)'}
+            {downloading ? '⟳ GENERATING...' : '📄 GENERATE FULL REPORT'}
           </button>
         </div>
 
