@@ -219,7 +219,7 @@ export default function Home() {
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div style={{ background: getRiskColor(scan.risk_level) + '22', border: `1px solid ${getRiskColor(scan.risk_level)}`, borderRadius: '4px', padding: '2px 10px', color: getRiskColor(scan.risk_level), fontFamily: 'Orbitron, sans-serif', fontSize: '10px', fontWeight: '700' }}>{scan.risk_level}</div>
-                            <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '13px', color: getRiskColor(scan.risk_level) }}>{scan.security_score}/100</div>
+                            <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '13px', color: getRiskColor(scan.risk_level) }}>{scan.security_score}/10.0</div>
                             <div style={{ fontFamily: 'Share Tech Mono, monospace', fontSize: '11px', color: '#7a9a8a' }}>{scan.critical_findings_count} findings</div>
                             <a href={`https://api.vulnforge.app/api/history/download/${scan.id}`} download onClick={e => e.stopPropagation()}>
                               <button style={{ background: '#00ff8822', border: '1px solid #00ff88', borderRadius: '4px', padding: '4px 12px', color: '#00ff88', fontFamily: 'Share Tech Mono, monospace', fontSize: '11px', cursor: 'pointer', transition: 'all 0.2s' }}
@@ -351,7 +351,7 @@ export default function Home() {
                   <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '16px', color: '#00ff88', letterSpacing: '2px' }}>🤖 AI SECURITY ANALYSIS</div>
                   <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                     <div style={{ background: getRiskColor(aiAnalysis.risk_level) + '22', border: `1px solid ${getRiskColor(aiAnalysis.risk_level)}`, borderRadius: '4px', padding: '4px 12px', color: getRiskColor(aiAnalysis.risk_level), fontFamily: 'Orbitron, sans-serif', fontSize: '12px', fontWeight: '700' }}>{aiAnalysis.risk_level}</div>
-                    <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '24px', color: getRiskColor(aiAnalysis.risk_level) }}>{aiAnalysis.security_score}/100</div>
+                    <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '24px', color: getRiskColor(aiAnalysis.risk_level) }}>{aiAnalysis.security_score}/10.0</div>
                   </div>
                 </div>
                 <div style={{ marginBottom: '24px' }}>

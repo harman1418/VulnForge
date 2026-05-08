@@ -63,7 +63,7 @@ export default function ScanReport() {
     
     // Header section
     csvRows.push("Category,Item,Details / Severity,Description / Value")
-    csvRows.push(`Audit Target,${scan?.target || 'Unknown'},Risk Rating: ${scan?.ai_analysis?.risk_level || 'UNKNOWN'},Security Score: ${scan?.ai_analysis?.security_score || 0}/100`)
+    csvRows.push(`Audit Target,${scan?.target || 'Unknown'},Risk Rating: ${scan?.ai_analysis?.risk_level || 'UNKNOWN'},CVSS Score: ${scan?.ai_analysis?.security_score || 0}/10.0`)
     csvRows.push("") // spacing row
 
     // Open Ports
@@ -169,8 +169,8 @@ export default function ScanReport() {
                 <div style="font-size: 12px; color: #64748b; margin-top: 8px;">Generated on: ${new Date(scan?.created_at).toLocaleString()}</div>
             </div>
             <div style="text-align: right;">
-                <div style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Security Score</div>
-                <div class="score">${ai.security_score || 0}<span style="font-size: 18px; color: #64748b;">/100</span></div>
+                <div style="font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">CVSS Score</div>
+                <div class="score">${ai.security_score || 0}<span style="font-size: 18px; color: #64748b;">/10.0</span></div>
                 <div style="margin-top: 8px;"><span class="badge badge-critical">${ai.risk_level || 'UNKNOWN'} RISK</span></div>
             </div>
         </div>
@@ -328,7 +328,7 @@ export default function ScanReport() {
                 {ai.risk_level || 'UNKNOWN'}
               </div>
               <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '28px', fontWeight: '900', color: getRiskColor(ai.risk_level) }}>
-                {ai.security_score || 0}<span style={{ fontSize: '14px', color: '#7a9a8a' }}>/100</span>
+                {ai.security_score || 0}<span style={{ fontSize: '14px', color: '#7a9a8a' }}>/10.0</span>
               </div>
             </div>
           </div>

@@ -23,7 +23,7 @@ export default function Dashboard() {
       const targets = targetsRes.data.targets || []
       const scans   = scansRes.data.scans   || []
       const critical = scans.filter(s => s.risk_level === 'CRITICAL' || s.risk_level === 'HIGH').length
-      const avgScore = scans.length ? Math.round(scans.reduce((a, b) => a + (b.security_score || 0), 0) / scans.length) : 0
+      const avgScore = scans.length ? Math.round(scans.reduce((a, b) => a + (b.security_score || 0), 0) / scans.length * 10) / 10 : 0
       setStats({ targets: targets.length, scans: scans.length, critical, avgScore })
       setRecentScans(scans.slice(0, 5))
     } catch (err) { console.error(err) }
@@ -52,7 +52,7 @@ export default function Dashboard() {
     { label: 'Total Targets',      value: stats.targets,           color: 'var(--blue)',   icon: <TargetIcon size={16} color="var(--blue)" /> },
     { label: 'Total Scans',        value: stats.scans,             color: 'var(--green)',  icon: <ScanIcon size={16} color="var(--green)" /> },
     { label: 'High Risk Scans',    value: stats.critical,          color: 'var(--red)',    icon: <AlertIcon size={16} color="var(--red)" /> },
-    { label: 'Avg Security Score', value: `${stats.avgScore}/100`, color: 'var(--orange)', icon: <ShieldIcon size={16} color="var(--orange)" /> },
+    { label: 'Avg CVSS Score',    value: `${stats.avgScore}/10.0`, color: 'var(--orange)', icon: <ShieldIcon size={16} color="var(--orange)" /> },
   ]
 
   return (

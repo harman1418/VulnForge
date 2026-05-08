@@ -448,7 +448,7 @@ export default function Targets() {
                       {log.status === 'done' && log.data?.total !== undefined &&
                         <span style={{ color: 'var(--text2)', marginLeft: '6px' }}>→ {log.data.total} found</span>}
                       {log.status === 'done' && log.data?.risk_level &&
-                        <span style={{ color: 'var(--text2)', marginLeft: '6px' }}>→ Risk: {log.data.risk_level} | Score: {log.data.security_score}</span>}
+                        <span style={{ color: 'var(--text2)', marginLeft: '6px' }}>→ Risk: {log.data.risk_level} | CVSS: {log.data.security_score}</span>}
                       {log.status === 'done' && log.data?.scan_id &&
                         <span style={{ color: 'var(--green)', marginLeft: '6px' }}>→ Saved ✓</span>}
                     </span>
