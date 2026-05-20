@@ -28,8 +28,7 @@ export default function PageTransition({ children }) {
       key={key}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(8px)',
-        transition: 'opacity 0.25s ease, transform 0.25s ease',
+        transition: 'opacity 0.25s ease',
       }}
     >
       {children}
