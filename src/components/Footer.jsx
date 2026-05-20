@@ -9,6 +9,8 @@ export default function Footer() {
       justifyContent: 'space-between',
       flexWrap: 'wrap',
       gap: '10px',
+      position: 'relative',
+      zIndex: 1,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <img src="/VulnForge1.png" alt="VulnForge" style={{ height: '16px', width: '16px', objectFit: 'contain', opacity: 0.6 }} />
