@@ -69,7 +69,9 @@ export default function Landing() {
   usePageTitle('Home')
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      
+      <MatrixBackground opacity={0.25} />
 
       {/* ── Navbar ── */}
       <nav style={{ height: '56px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', padding: '0 clamp(16px, 4vw, 40px)', position: 'sticky', top: 0, zIndex: 100 }}>
@@ -87,11 +89,6 @@ export default function Landing() {
 
       {/* ── Hero ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(48px, 10vw, 100px) clamp(16px, 4vw, 40px)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-
-        {/* Matrix background */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}>
-          <MatrixBackground opacity={0.25} />
-        </div>
 
         {/* Radial glow */}
         <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', width: 'min(700px, 90vw)', height: '500px', background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -166,7 +163,7 @@ export default function Landing() {
       </div>
 
       {/* ── Features ── */}
-      <div style={{ background: 'var(--bg2)', borderTop: '1px solid var(--border)', padding: 'clamp(48px, 8vw, 80px) clamp(16px, 4vw, 40px)' }}>
+      <div style={{ borderTop: '1px solid var(--border)', padding: 'clamp(48px, 8vw, 80px) clamp(16px, 4vw, 40px)', position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
           <ScrollReveal duration={600}>
@@ -197,7 +194,7 @@ export default function Landing() {
 
       {/* ── CTA Banner ── */}
       <ScrollReveal duration={600}>
-        <div style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)', padding: 'clamp(40px, 6vw, 64px) clamp(16px, 4vw, 40px)', textAlign: 'center' }}>
+        <div style={{ borderTop: '1px solid var(--border)', padding: 'clamp(40px, 6vw, 64px) clamp(16px, 4vw, 40px)', textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <HackerText text="Ready to find vulnerabilities?" tag="h2" style={{ fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: '700', color: 'var(--text)', marginBottom: '8px', display: 'block' }} triggerOnMount={false} duration={700} />
           <p style={{ fontSize: '15px', color: 'var(--text2)', marginBottom: '24px' }}>Start your first scan in seconds — no setup required.</p>
           <Link to="/register">
